@@ -18,6 +18,7 @@ class GCloudClient:
         """Initialize GCloudClient with project and zone configuration."""
         self.project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
         self.zone = os.environ.get('GOOGLE_CLOUD_ZONE', 'us-central1-a')
+        self.github_runner_group = os.environ.get('GITHUB_RUNNER_GROUP', '').strip()
         self.region = '-'.join(self.zone.split('-')[:-1])
 
         if not self.project_id:
@@ -92,11 +93,13 @@ class GCloudClient:
             )
             return None
 
+        # Name must start with a lowercase letter followed by up to 62 lowercase letters,
+        # numbers, or hyphens, and cannot end with a hyphen.
         instance_uuid = uuid.uuid4().hex[:16]
         if instance_template_resource.name.startswith("dependabot"):
-            instance_name = f"dependabot-{instance_uuid}"
+            instance_name = f"gcp-runner-dependabot-{instance_uuid}"
         else:
-            instance_name = f"runner-{instance_uuid}"
+            instance_name = f"gcp-runner-{instance_uuid}"
 
         logger.info(
             "Creating GCE instance %s with template %s, delivery_id: %s",
@@ -118,12 +121,22 @@ class GCloudClient:
             }
 
         # Set metadata (startup script) - use shlex.quote to prevent command injection
+        runner_group_flag = ""
+        if self.github_runner_group:
+            runner_group_flag = f" --runnergroup {shlex.quote(self.github_runner_group)}"
+
         startup_script = (
-            f"sudo -u runner /actions-runner/config.sh --url {shlex.quote(repo_url)} "
+            "cd /actions-runner && "
+            f"sudo -u runner ./config.sh --url {shlex.quote(repo_url)} "
             f"--token {shlex.quote(registration_token)} "
-            f"--name {shlex.quote(instance_name)} --labels {shlex.quote(template_name)} "
-            "--ephemeral --unattended --no-default-labels --disableupdate && "
-            "sudo -u runner /actions-runner/run.sh"
+            f"--name {shlex.quote(instance_name)} "
+            f"--labels {shlex.quote(template_name)} "
+            f"{runner_group_flag} "
+            "--ephemeral "
+            "--unattended "
+            "--no-default-labels "
+            "--disableupdate && "
+            "sudo -u runner ./run.sh"
         )
         metadata = compute_v1.Metadata()
         metadata.items = [

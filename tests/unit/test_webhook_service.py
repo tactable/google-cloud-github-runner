@@ -14,7 +14,7 @@ class TestWebhookService:
         mock_gh_client_class.return_value = mock_gh_client
 
         mock_gc_client = Mock()
-        mock_gc_client.create_runner_instance.return_value = "runner-abc123"
+        mock_gc_client.create_runner_instance.return_value = "gcp-runner-abc123"
         mock_gc_client_class.return_value = mock_gc_client
 
         service = WebhookService()
@@ -32,7 +32,7 @@ class TestWebhookService:
 
         result = service.handle_workflow_job(payload, delivery_id="delivery-001")
 
-        assert result == {"action": "created", "runner_name": "runner-abc123"}
+        assert result == {"action": "created", "runner_name": "gcp-runner-abc123"}
         mock_gh_client.get_registration_token.assert_called_once_with(
             repo_name='owner/repo', delivery_id="delivery-001"
         )
@@ -53,7 +53,7 @@ class TestWebhookService:
         mock_gh_client_class.return_value = mock_gh_client
 
         mock_gc_client = Mock()
-        mock_gc_client.create_runner_instance.return_value = "runner-org456"
+        mock_gc_client.create_runner_instance.return_value = "gcp-runner-org456"
         mock_gc_client_class.return_value = mock_gc_client
 
         service = WebhookService()
@@ -74,7 +74,7 @@ class TestWebhookService:
 
         result = service.handle_workflow_job(payload, delivery_id="delivery-org-001")
 
-        assert result == {"action": "created", "runner_name": "runner-org456"}
+        assert result == {"action": "created", "runner_name": "gcp-runner-org456"}
         mock_gh_client.get_registration_token.assert_called_once_with(
             org_name='my-org', delivery_id="delivery-org-001"
         )
@@ -125,7 +125,7 @@ class TestWebhookService:
         payload = {
             'action': 'completed',
             'workflow_job': {
-                'runner_name': 'runner-12345'
+                'runner_name': 'gcp-runner-12345'
             }
         }
 
@@ -133,9 +133,9 @@ class TestWebhookService:
             payload, delivery_id="delivery-completed-001"
         )
 
-        assert result == {"action": "deleted", "runner_name": "runner-12345"}
+        assert result == {"action": "deleted", "runner_name": "gcp-runner-12345"}
         mock_gc_client.delete_runner_instance.assert_called_once_with(
-            'runner-12345', delivery_id="delivery-completed-001"
+            'gcp-runner-12345', delivery_id="delivery-completed-001"
         )
 
     @patch('app.services.webhook_service.GCloudClient')
@@ -230,16 +230,16 @@ class TestWebhookService:
         payload = {
             'action': 'completed',
             'workflow_job': {
-                'runner_name': 'runner-12345'
+                'runner_name': 'gcp-runner-12345'
             }
         }
 
         # Should not raise exception, just log error and return runner_name
         result = service.handle_workflow_job(payload, delivery_id="delivery-delerr-001")
 
-        assert result == {"action": "deleted", "runner_name": "runner-12345"}
+        assert result == {"action": "deleted", "runner_name": "gcp-runner-12345"}
         mock_gc_client.delete_runner_instance.assert_called_once_with(
-            'runner-12345', delivery_id="delivery-delerr-001"
+            'gcp-runner-12345', delivery_id="delivery-delerr-001"
         )
 
 
