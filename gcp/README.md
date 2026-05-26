@@ -270,6 +270,8 @@ Example:
 The script will create a custom image based on the specified image name.
 During startup, the script [startup/install.sh](startup/install.sh) will be executed.
 
+> **Note:** Rebuild custom images regularly to update the OS and GitHub Actions Runner with the latest security patches and features. Keeping the base image up to date is essential for maintaining a secure and stable CI/CD environment.
+
 ## Default Machine Sizes for Runners
 
 The following table shows the default machine sizes for runners.
