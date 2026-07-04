@@ -511,9 +511,9 @@ variable "github_runners_types" {
   validation {
     condition = alltrue([
       for config in var.github_runners_types :
-      can(regex("(^dependabot$|^gcp-[a-zA-Z0-9-]+$)", config.name))
+      can(regex("(^dependabot$|^(commb-)?gcp-[a-zA-Z0-9-]+$)", config.name))
     ])
-    error_message = "All names must start with 'gcp-' or must be named 'dependabot' and only contain letters, numbers and hyphens."
+    error_message = "All names must start with 'gcp-' or 'commb-gcp-' or must be named 'dependabot' and only contain letters, numbers and hyphens."
   }
 
   validation {

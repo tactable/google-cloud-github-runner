@@ -71,7 +71,7 @@ class WebhookService:
             template_name = None
             if labels:
                 for label in labels:
-                    if label.startswith('gcp-') or label.lower() == 'dependabot':
+                    if label.startswith(('gcp-', 'commb-gcp-')) or label.lower() == 'dependabot':
                         template_name = label
                         break
             if template_name:
