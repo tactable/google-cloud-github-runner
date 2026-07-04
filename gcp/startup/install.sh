@@ -101,7 +101,7 @@ sudo systemctl start docker.service
 # https://docs.cloud.google.com/sdk/docs/install-sdk#deb
 # The google-cloud-cli apt package includes gcloud, gcloud beta, gsutil and bq.
 echo "Installing Google Cloud CLI..."
-sudo curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" -o "/usr/share/keyrings/cloud.google.gpg"
+sudo curl -fsSL "https://packages.cloud.google.com/apt/doc/apt-key.gpg" | sudo gpg --dearmor -o "/usr/share/keyrings/cloud.google.gpg"
 echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee "/etc/apt/sources.list.d/google-cloud-sdk.list" >/dev/null
 sudo apt-get update -yq
 sudo apt-get install -y google-cloud-cli
