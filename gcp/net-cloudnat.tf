@@ -6,4 +6,7 @@ module "nat-github-runners" {
   region         = var.region
   name           = "cloudnat-github-runners-${local.region_shortnames[var.region]}"
   router_network = module.vpc-github-runners.self_link
+  # With manual addresses the runners get a stable egress IP that can be
+  # allowlisted (e.g. Cloud SQL authorized networks). Empty = auto-allocated.
+  addresses = var.nat_addresses
 }

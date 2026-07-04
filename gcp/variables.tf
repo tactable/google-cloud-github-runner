@@ -565,3 +565,11 @@ variable "github_runners_types" {
     error_message = "All arch values must be either 'amd64' or 'arm64'."
   }
 }
+
+# Optional static external IPs for Cloud NAT (stable egress for allowlisting)
+variable "nat_addresses" {
+  description = "Optional list of external address self links for Cloud NAT; empty list means auto-allocated ephemeral NAT IPs"
+  type        = list(string)
+  default     = []
+  nullable    = false
+}
