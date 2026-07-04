@@ -7,6 +7,10 @@
 
 set -e
 
+# Run from this script's directory so relative paths resolve when the
+# module is consumed from another root (cwd is then not the gcp directory).
+cd "$(dirname "$0")"
+
 # Check if required files exist
 if [ ! -f "cloudbuild-container.yaml" ] || [ ! -f "../Dockerfile" ]; then
 	echo "Error: This command must be executed in the gcp directory." >&2
