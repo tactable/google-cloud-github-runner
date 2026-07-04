@@ -230,6 +230,7 @@ variable "github_runners_types" {
     disk_provisioned_throughput = number
     image                       = string
     arch                        = string
+    spot                        = optional(bool, false)
   }))
   # Similar to https://docs.github.com/en/enterprise-cloud@latest/actions/reference/runners/larger-runners
   default = [
